@@ -29,14 +29,13 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "ECycle Arena" },
+      { name: "description", content: "Recycle e-waste, climb the leaderboard, win prizes." },
+      { name: "author", content: "ECycle Arena" },
+      { property: "og:title", content: "ECycle Arena" },
+      { property: "og:description", content: "Recycle e-waste, climb the leaderboard, win prizes." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
