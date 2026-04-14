@@ -39,30 +39,22 @@ export type Database = {
           image_url?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "ewaste_submissions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "leaderboard"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
-    }
-    Views: {
-      leaderboard: {
-        Row: {
-          email: string | null
-          item_count: number | null
-          score: number | null
-          user_id: string | null
-        }
         Relationships: []
       }
     }
-    Functions: {
+    Views: {
       [_ in never]: never
+    }
+    Functions: {
+      get_leaderboard: {
+        Args: never
+        Returns: {
+          item_count: number
+          score: number
+          user_email: string
+          user_id: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
