@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
 import { RewardCard } from "@/components/RewardCard";
+import { RulesSection } from "@/components/RulesSection";
 import { StatsBar } from "@/components/StatsBar";
 
 export const Route = createFileRoute("/")({
@@ -45,6 +46,7 @@ function Index() {
               <LeaderboardTable compact />
             </div>
             <RewardCard />
+            <RulesSection />
           </div>
         </div>
       </main>
