@@ -78,6 +78,9 @@ export function LeaderboardTable({ compact = false }: { compact?: boolean }) {
               <div className="truncate text-sm font-bold uppercase tracking-tight">
                 {extractUsername(leader.user_email)}
               </div>
+              <div className="truncate text-[10px] text-muted-foreground">
+                {leader.user_email}
+              </div>
               <div className="flex gap-2">
                 <span className={`text-[10px] font-bold px-1.5 py-0.5 ${tier.cls}`}>
                   {tier.name}
