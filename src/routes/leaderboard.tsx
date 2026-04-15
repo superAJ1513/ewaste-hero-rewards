@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
 import { RewardCard } from "@/components/RewardCard";
+import { RulesSection } from "@/components/RulesSection";
 
 export const Route = createFileRoute("/leaderboard")({
   head: () => ({
@@ -27,8 +28,9 @@ function LeaderboardPage() {
           </p>
         </div>
         <LeaderboardTable />
-        <div className="mt-8">
+        <div className="mt-8 space-y-6">
           <RewardCard />
+          <RulesSection />
         </div>
       </main>
     </div>
