@@ -37,6 +37,8 @@ export const Route = createRootRoute({
       { property: "og:description", content: "Recycle e-waste, climb the leaderboard, win prizes." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "ECycle Arena" },
+      { name: "twitter:description", content: "Recycle e-waste, climb the leaderboard, win prizes." },
     ],
     links: [
       {
