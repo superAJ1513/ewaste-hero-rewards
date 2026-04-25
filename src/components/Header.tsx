@@ -23,17 +23,27 @@ export function Header() {
           </span>
         </Link>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3">
           <Link to="/leaderboard">
             <Button variant="ghost" size="sm" className="text-[10px] font-bold uppercase tracking-widest sm:text-xs">
               Board
             </Button>
           </Link>
+          <Link to="/shop">
+            <Button variant="ghost" size="sm" className="text-[10px] font-bold uppercase tracking-widest sm:text-xs">
+              Shop
+            </Button>
+          </Link>
           {user ? (
             <>
+              <Link to="/profile">
+                <Button variant="ghost" size="sm" className="text-[10px] font-bold uppercase tracking-widest sm:text-xs">
+                  Me
+                </Button>
+              </Link>
               <Link to="/upload">
                 <Button variant="neon" size="sm">
-                  Drop E-Waste
+                  Drop
                 </Button>
               </Link>
               <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground sm:text-xs">
@@ -49,7 +59,7 @@ export function Header() {
               </Link>
               <Link to="/register">
                 <Button variant="neon" size="sm">
-                  Register
+                  Join
                 </Button>
               </Link>
             </>

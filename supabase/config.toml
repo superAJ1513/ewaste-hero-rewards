@@ -1,1 +1,7 @@
 project_id = "ozumhwisjntwhhjshtlc"
+
+[functions.detect-ewaste]
+verify_jwt = false
+
+[functions.redeem-product]
+verify_jwt = false
