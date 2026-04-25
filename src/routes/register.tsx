@@ -43,6 +43,19 @@ function RegisterPage() {
     }
   };
 
+  const handleGoogle = async () => {
+    setError("");
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin + "/upload",
+    });
+    if (result.error) {
+      setError(result.error.message);
+      return;
+    }
+    if (result.redirected) return;
+    navigate({ to: "/upload" });
+  };
+
   return (
     <div className="min-h-dvh bg-background">
       <Header />
