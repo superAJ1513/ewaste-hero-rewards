@@ -2,26 +2,31 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export function StatsBar() {
-  const [stats, setStats] = useState<{ items: number; users: number; prizes: number } | null>(null);
+  const [stats, setStats] = useState<{ items: number; users: number; xp: number } | null>(null);
 
   useEffect(() => {
     async function fetchStats() {
       const [itemsRes, leaderboardRes] = await Promise.all([
-        supabase.from("ewaste_submissions").select("*", { count: "exact", head: true }),
-        supabase.rpc("get_leaderboard"),
+        supabase.from("ewaste_submissions").select("xp_awarded", { count: "exact" }),
+        supabase.rpc("get_leaderboard_overall"),
       ]);
       const items = itemsRes.count ?? 0;
-      const users = leaderboardRes.data ? (leaderboardRes.data as Array<{ user_id: string }>).length : 0;
-      // Prizes awarded = number of completed weekly cycles. None yet since program just launched.
-      setStats({ items, users, prizes: 0 });
+      const users = leaderboardRes.data
+        ? (leaderboardRes.data as Array<{ user_id: string }>).length
+        : 0;
+      const xp = (itemsRes.data ?? []).reduce(
+        (sum, row: { xp_awarded: number | null }) => sum + (row.xp_awarded ?? 0),
+        0,
+      );
+      setStats({ items, users, xp });
     }
     fetchStats();
   }, []);
 
   const display = [
-    { label: "Total E-Waste Collected", value: stats?.items ?? null, unit: "items" },
-    { label: "Active Users", value: stats?.users ?? null, unit: "players" },
-    { label: "Prizes Awarded", value: stats?.prizes ?? null, unit: "rewards" },
+    { label: "Items Recycled", value: stats?.items ?? null, unit: "items" },
+    { label: "Active Players", value: stats?.users ?? null, unit: "players" },
+    { label: "Total XP Awarded", value: stats?.xp ?? null, unit: "xp" },
   ];
 
   return (
