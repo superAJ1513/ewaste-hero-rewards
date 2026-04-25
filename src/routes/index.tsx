@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
-import { LeaderboardTable } from "@/components/LeaderboardTable";
 import { RewardCard } from "@/components/RewardCard";
 import { RulesSection } from "@/components/RulesSection";
 import { StatsBar } from "@/components/StatsBar";
@@ -31,20 +30,6 @@ function Index() {
             </div>
           </div>
           <div className="lg:col-span-5 space-y-6">
-            <div className="border-t-4 border-border bg-surface p-6 arcade-border-cyan sm:p-8">
-              <div className="mb-6 flex items-end justify-between">
-                <div>
-                  <h2 className="font-display text-2xl italic uppercase tracking-tighter sm:text-3xl">
-                    Hall of Power
-                  </h2>
-                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                    Top Contributors
-                  </p>
-                </div>
-                <div className="font-display text-lg italic text-neon-cyan animate-pulse">LIVE</div>
-              </div>
-              <LeaderboardTable compact />
-            </div>
             <RewardCard />
             <RulesSection />
           </div>
