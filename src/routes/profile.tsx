@@ -54,7 +54,6 @@ function ProfilePage() {
     if (!cardRef.current) return;
     try {
       // Use html2canvas-like approach via canvas snapshot — fallback to copying text
-      // @ts-expect-error - no types shipped
       const html2canvas = (await import("html2canvas-pro")).default;
       const canvas: HTMLCanvasElement = await html2canvas(cardRef.current, { backgroundColor: null });
       canvas.toBlob(async (blob: Blob | null) => {
