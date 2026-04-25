@@ -17,42 +17,170 @@ export type Database = {
       ewaste_submissions: {
         Row: {
           category: string
+          confidence: number | null
           created_at: string
           description: string | null
+          detected_label: string | null
           id: string
           image_url: string
           user_id: string
+          xp_awarded: number
         }
         Insert: {
           category?: string
+          confidence?: number | null
           created_at?: string
           description?: string | null
+          detected_label?: string | null
           id?: string
           image_url: string
           user_id: string
+          xp_awarded?: number
         }
         Update: {
           category?: string
+          confidence?: number | null
           created_at?: string
           description?: string | null
+          detected_label?: string | null
           id?: string
           image_url?: string
           user_id?: string
+          xp_awarded?: number
         }
         Relationships: []
+      }
+      products: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          sort_order: number
+          xp_cost: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          sort_order?: number
+          xp_cost: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          sort_order?: number
+          xp_cost?: number
+        }
+        Relationships: []
+      }
+      redemptions: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          product_id: string
+          product_name: string
+          ship_address: string
+          ship_email: string | null
+          ship_name: string
+          ship_phone: string
+          status: string
+          user_id: string
+          xp_cost: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          product_id: string
+          product_name: string
+          ship_address: string
+          ship_email?: string | null
+          ship_name: string
+          ship_phone: string
+          status?: string
+          user_id: string
+          xp_cost: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          product_id?: string
+          product_name?: string
+          ship_address?: string
+          ship_email?: string | null
+          ship_name?: string
+          ship_phone?: string
+          status?: string
+          user_id?: string
+          xp_cost?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "redemptions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      get_leaderboard: {
+      get_current_xp: { Args: { _user_id: string }; Returns: number }
+      get_leaderboard_monthly: {
         Args: never
         Returns: {
           item_count: number
           score: number
           user_email: string
           user_id: string
+        }[]
+      }
+      get_leaderboard_overall: {
+        Args: never
+        Returns: {
+          current_xp: number
+          item_count: number
+          lifetime_xp: number
+          user_email: string
+          user_id: string
+        }[]
+      }
+      get_leaderboard_weekly: {
+        Args: never
+        Returns: {
+          item_count: number
+          score: number
+          user_email: string
+          user_id: string
+        }[]
+      }
+      get_user_stats: {
+        Args: { _user_id: string }
+        Returns: {
+          current_xp: number
+          item_count: number
+          lifetime_xp: number
+          monthly_xp: number
+          rank_position: number
+          tier: string
+          total_users: number
+          weekly_xp: number
         }[]
       }
     }
