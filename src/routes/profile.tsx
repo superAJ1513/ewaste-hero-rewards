@@ -4,6 +4,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AvatarUploader } from "@/components/AvatarUploader";
 import { getTier, TIERS } from "@/lib/tiers";
 
 export const Route = createFileRoute("/profile")({
@@ -31,6 +33,7 @@ function ProfilePage() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [stats, setStats] = useState<UserStats | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -41,10 +44,14 @@ function ProfilePage() {
     }
     if (!user) return;
     async function load() {
-      const { data } = await supabase.rpc("get_user_stats", { _user_id: user!.id });
-      if (data && Array.isArray(data) && data[0]) {
-        setStats(data[0] as UserStats);
+      const [statsRes, profileRes] = await Promise.all([
+        supabase.rpc("get_user_stats", { _user_id: user!.id }),
+        supabase.from("profiles").select("avatar_url").eq("id", user!.id).maybeSingle(),
+      ]);
+      if (statsRes.data && Array.isArray(statsRes.data) && statsRes.data[0]) {
+        setStats(statsRes.data[0] as UserStats);
       }
+      setAvatarUrl(profileRes.data?.avatar_url ?? null);
       setLoading(false);
     }
     load();
@@ -106,6 +113,16 @@ function ProfilePage() {
           </h1>
         </div>
 
+        {/* Profile picture uploader */}
+        <div className="mb-6 border border-border bg-surface p-4">
+          <AvatarUploader
+            userId={user.id}
+            initialUrl={avatarUrl}
+            fallbackInitials={username.slice(0, 2)}
+            onChange={setAvatarUrl}
+          />
+        </div>
+
         {/* Shareable card */}
         <div
           ref={cardRef}
@@ -116,9 +133,15 @@ function ProfilePage() {
           }} />
           <div className="relative">
             <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">ECycle Arena</div>
-                <div className="font-display text-2xl italic uppercase tracking-tight">{username}</div>
+              <div className="flex items-center gap-3">
+                <Avatar className={`size-14 rounded-none border-2 ${tier.border}`}>
+                  {avatarUrl ? <AvatarImage src={avatarUrl} alt={username} className="rounded-none object-cover" /> : null}
+                  <AvatarFallback className="rounded-none bg-muted font-display italic">{username.slice(0, 2)}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">ECycle Arena</div>
+                  <div className="font-display text-2xl italic uppercase tracking-tight">{username}</div>
+                </div>
               </div>
               <div className={`border-2 ${tier.border} ${tier.bg} px-3 py-1`}>
                 <div className="font-display text-xs italic">{tier.short}</div>
