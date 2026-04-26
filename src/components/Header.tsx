@@ -24,19 +24,28 @@ export function Header() {
         </Link>
 
         <div className="flex items-center gap-1.5 sm:gap-3">
-          <Link to="/leaderboard">
+          <Link
+            to="/leaderboard"
+            activeProps={{ className: "[&_button]:text-neon-acid [&_button]:bg-neon-acid/10" }}
+          >
             <Button variant="ghost" size="sm" className="text-[10px] font-bold uppercase tracking-widest sm:text-xs">
               Board
             </Button>
           </Link>
-          <Link to="/shop">
+          <Link
+            to="/shop"
+            activeProps={{ className: "[&_button]:text-neon-acid [&_button]:bg-neon-acid/10" }}
+          >
             <Button variant="ghost" size="sm" className="text-[10px] font-bold uppercase tracking-widest sm:text-xs">
               Shop
             </Button>
           </Link>
           {user ? (
             <>
-              <Link to="/profile">
+              <Link
+                to="/profile"
+                activeProps={{ className: "[&_button]:text-neon-acid [&_button]:bg-neon-acid/10" }}
+              >
                 <Button variant="ghost" size="sm" className="text-[10px] font-bold uppercase tracking-widest sm:text-xs">
                   Me
                 </Button>

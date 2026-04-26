@@ -99,7 +99,7 @@ export function LeaderboardTable({
         const rank = idx + 1;
         const score =
           mode === "overall"
-            ? (leader as OverallRow).current_xp ?? 0
+            ? (leader as OverallRow).lifetime_xp ?? 0
             : (leader as PeriodRow).score ?? 0;
         const lifetime = mode === "overall" ? (leader as OverallRow).lifetime_xp : null;
         const tierStyle = lifetime != null ? getTier(tierFromLifetime(rank, rows.length)) : null;
