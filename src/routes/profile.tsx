@@ -4,6 +4,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AvatarUploader } from "@/components/AvatarUploader";
 import { getTier, TIERS } from "@/lib/tiers";
 
 export const Route = createFileRoute("/profile")({
@@ -31,6 +33,7 @@ function ProfilePage() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [stats, setStats] = useState<UserStats | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -41,10 +44,14 @@ function ProfilePage() {
     }
     if (!user) return;
     async function load() {
-      const { data } = await supabase.rpc("get_user_stats", { _user_id: user!.id });
-      if (data && Array.isArray(data) && data[0]) {
-        setStats(data[0] as UserStats);
+      const [statsRes, profileRes] = await Promise.all([
+        supabase.rpc("get_user_stats", { _user_id: user!.id }),
+        supabase.from("profiles").select("avatar_url").eq("id", user!.id).maybeSingle(),
+      ]);
+      if (statsRes.data && Array.isArray(statsRes.data) && statsRes.data[0]) {
+        setStats(statsRes.data[0] as UserStats);
       }
+      setAvatarUrl(profileRes.data?.avatar_url ?? null);
       setLoading(false);
     }
     load();
