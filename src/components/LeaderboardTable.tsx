@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { getTier } from "@/lib/tiers";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type Mode = "overall" | "weekly" | "monthly";
 
 interface BaseRow {
   user_id: string;
   user_email: string;
+  display_name: string | null;
+  avatar_url: string | null;
   item_count: number;
 }
 interface OverallRow extends BaseRow {
@@ -24,8 +27,9 @@ function getRankColor(rank: number) {
   return "text-muted-foreground border-border";
 }
 
-function extractUsername(email: string) {
-  return email.split("@")[0].toUpperCase().replace(/[^A-Z0-9]/g, "_");
+function displayUsername(row: BaseRow) {
+  if (row.display_name && row.display_name.trim()) return row.display_name.toUpperCase();
+  return row.user_email.split("@")[0].toUpperCase().replace(/[^A-Z0-9]/g, "_");
 }
 
 function highlightTopN(mode: Mode, rank: number) {
@@ -48,6 +52,7 @@ export function LeaderboardTable({
     let cancelled = false;
     async function load() {
       setLoading(true);
+      setRows([]); // clear stale rows so the previous mode's shape doesn't crash render
       const rpc =
         mode === "overall"
           ? "get_leaderboard_overall"
@@ -94,11 +99,13 @@ export function LeaderboardTable({
         const rank = idx + 1;
         const score =
           mode === "overall"
-            ? (leader as OverallRow).current_xp
-            : (leader as PeriodRow).score;
+            ? (leader as OverallRow).current_xp ?? 0
+            : (leader as PeriodRow).score ?? 0;
         const lifetime = mode === "overall" ? (leader as OverallRow).lifetime_xp : null;
-        const tierStyle = lifetime != null ? getTier(tierFromLifetime(lifetime, rank, rows.length)) : null;
+        const tierStyle = lifetime != null ? getTier(tierFromLifetime(rank, rows.length)) : null;
         const isPrize = highlightTopN(mode, rank);
+        const username = displayUsername(leader);
+        const initials = username.slice(0, 2);
 
         return (
           <div
@@ -110,12 +117,18 @@ export function LeaderboardTable({
             <span className={`font-display text-2xl italic ${getRankColor(rank).split(" ")[0]} w-8`}>
               {String(rank).padStart(2, "0")}
             </span>
-            <div className={`hidden size-10 shrink-0 border-2 bg-muted sm:block ${getRankColor(rank).split(" ")[1]}`} />
+            <Avatar
+              className={`hidden size-10 shrink-0 rounded-none border-2 sm:block ${getRankColor(rank).split(" ")[1]}`}
+            >
+              {leader.avatar_url ? <AvatarImage src={leader.avatar_url} alt={username} className="rounded-none object-cover" /> : null}
+              <AvatarFallback className="rounded-none bg-muted text-[10px] font-bold">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-bold uppercase tracking-tight">
-                {extractUsername(leader.user_email)}
+                {username}
               </div>
-              <div className="truncate text-[10px] text-muted-foreground">{leader.user_email}</div>
               <div className="mt-1 flex flex-wrap gap-1.5">
                 {tierStyle && (
                   <span className={`text-[10px] font-bold px-1.5 py-0.5 ${tierStyle.bg} ${tierStyle.text}`}>
@@ -145,9 +158,7 @@ export function LeaderboardTable({
   );
 }
 
-// Approximate tier from rank position within the visible overall list.
-// Server-side tier in get_user_stats is authoritative, this is just for the badge in the row.
-function tierFromLifetime(_lifetime: number, rank: number, total: number): string {
+function tierFromLifetime(rank: number, total: number): string {
   if (total === 0) return "Rookie";
   const pct = rank / total;
   if (pct <= 0.01) return "Grandmaster";
