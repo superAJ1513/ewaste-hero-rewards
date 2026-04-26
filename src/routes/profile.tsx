@@ -113,6 +113,16 @@ function ProfilePage() {
           </h1>
         </div>
 
+        {/* Profile picture uploader */}
+        <div className="mb-6 border border-border bg-surface p-4">
+          <AvatarUploader
+            userId={user.id}
+            initialUrl={avatarUrl}
+            fallbackInitials={username.slice(0, 2)}
+            onChange={setAvatarUrl}
+          />
+        </div>
+
         {/* Shareable card */}
         <div
           ref={cardRef}
@@ -123,9 +133,15 @@ function ProfilePage() {
           }} />
           <div className="relative">
             <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">ECycle Arena</div>
-                <div className="font-display text-2xl italic uppercase tracking-tight">{username}</div>
+              <div className="flex items-center gap-3">
+                <Avatar className={`size-14 rounded-none border-2 ${tier.border}`}>
+                  {avatarUrl ? <AvatarImage src={avatarUrl} alt={username} className="rounded-none object-cover" /> : null}
+                  <AvatarFallback className="rounded-none bg-muted font-display italic">{username.slice(0, 2)}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">ECycle Arena</div>
+                  <div className="font-display text-2xl italic uppercase tracking-tight">{username}</div>
+                </div>
               </div>
               <div className={`border-2 ${tier.border} ${tier.bg} px-3 py-1`}>
                 <div className="font-display text-xs italic">{tier.short}</div>
