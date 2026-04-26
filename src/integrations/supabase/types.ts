@@ -83,6 +83,30 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       redemptions: {
         Row: {
           created_at: string
@@ -145,6 +169,8 @@ export type Database = {
       get_leaderboard_monthly: {
         Args: never
         Returns: {
+          avatar_url: string
+          display_name: string
           item_count: number
           score: number
           user_email: string
@@ -154,7 +180,9 @@ export type Database = {
       get_leaderboard_overall: {
         Args: never
         Returns: {
+          avatar_url: string
           current_xp: number
+          display_name: string
           item_count: number
           lifetime_xp: number
           user_email: string
@@ -164,6 +192,8 @@ export type Database = {
       get_leaderboard_weekly: {
         Args: never
         Returns: {
+          avatar_url: string
+          display_name: string
           item_count: number
           score: number
           user_email: string
