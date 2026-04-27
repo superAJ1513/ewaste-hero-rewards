@@ -130,9 +130,20 @@ function ShopPage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {products.map((p) => {
               const canAfford = currentXp != null && currentXp >= p.xp_cost;
+              const tier =
+                p.xp_cost >= 15000
+                  ? { label: "Trophy", cls: "border-neon-magenta/50 bg-neon-magenta/10 text-neon-magenta" }
+                  : p.xp_cost >= 6000
+                  ? { label: "Premium", cls: "border-neon-cyan/50 bg-neon-cyan/10 text-neon-cyan" }
+                  : { label: "Accessible", cls: "border-neon-acid/50 bg-neon-acid/10 text-neon-acid" };
               return (
                 <div key={p.id} className="flex flex-col border border-border bg-surface p-5 transition-colors hover:border-neon-acid/40">
-                  <div className="font-display text-2xl italic uppercase tracking-tight">{p.name}</div>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="font-display text-2xl italic uppercase tracking-tight">{p.name}</div>
+                    <span className={`shrink-0 border px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest ${tier.cls}`}>
+                      {tier.label}
+                    </span>
+                  </div>
                   {p.description && (
                     <p className="mt-2 flex-1 text-xs text-muted-foreground">{p.description}</p>
                   )}
