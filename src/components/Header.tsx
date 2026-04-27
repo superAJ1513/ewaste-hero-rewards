@@ -1,14 +1,36 @@
 import { Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { Mail } from "lucide-react";
+
+const ADMIN_EMAIL = "super.aj1513@gmail.com";
 
 export function Header() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const [sending, setSending] = useState(false);
+
+  const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL;
 
   const handleSignOut = async () => {
     await signOut();
     navigate({ to: "/" });
+  };
+
+  const handleSendReport = async () => {
+    setSending(true);
+    try {
+      const { error } = await supabase.functions.invoke("send-success-report");
+      if (error) throw error;
+      toast.success(`Success report sent to ${ADMIN_EMAIL}`);
+    } catch (e: any) {
+      toast.error(e?.message || "Failed to send report");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -55,6 +77,18 @@ export function Header() {
                   Drop
                 </Button>
               </Link>
+              {isAdmin && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleSendReport}
+                  disabled={sending}
+                  title="Email success report to admin"
+                  className="text-neon-magenta hover:bg-neon-magenta/10"
+                >
+                  <Mail className="size-4" />
+                </Button>
+              )}
               <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground sm:text-xs">
                 Logout
               </Button>
