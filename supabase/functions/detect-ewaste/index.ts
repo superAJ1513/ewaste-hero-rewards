@@ -11,9 +11,9 @@ const corsHeaders = {
 // Categories with fixed XP. Order matters for prompt clarity.
 const CATEGORY_XP: Record<string, number> = {
   battery: 100,
-  phone_speaker: 800,
-  laptop: 5000,
-  tablet: 3000,
+  phone_speaker: 2500,
+  laptop: 12000,
+  tablet: 6000,
   charger_cable: 350,
   earphones_headphones: 650,
   keyboard: 400,
