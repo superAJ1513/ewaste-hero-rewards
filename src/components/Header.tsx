@@ -77,6 +77,18 @@ export function Header() {
                   Drop
                 </Button>
               </Link>
+              {isAdmin && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleSendReport}
+                  disabled={sending}
+                  title="Email success report to admin"
+                  className="text-neon-magenta hover:bg-neon-magenta/10"
+                >
+                  <Mail className="size-4" />
+                </Button>
+              )}
               <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground sm:text-xs">
                 Logout
               </Button>
