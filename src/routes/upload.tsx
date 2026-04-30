@@ -105,13 +105,17 @@ function UploadPage() {
     if (!detection || !user) return;
     const imageUrl = (detection as DetectResult & { _imageUrl: string })._imageUrl;
 
+    if (detection.duplicate) {
+      // Nothing to claim — already submitted by someone
+      return;
+    }
+
     if (detection.category === "unknown") {
       setError("That image wasn't recognized as e-waste. Try a clearer photo.");
       return;
     }
 
     if (detection.requiresContact) {
-      // Don't insert — just guide user to call
       return;
     }
 
@@ -123,6 +127,7 @@ function UploadPage() {
       xp_awarded: detection.xp,
       detected_label: detection.label,
       confidence: detection.confidence,
+      image_hash: detection.imageHash ?? null,
     });
 
     if (insertError) {
