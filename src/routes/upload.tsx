@@ -24,6 +24,8 @@ interface DetectResult {
   contactPhone?: string;
   reason?: string;
   error?: string;
+  imageHash?: string;
+  duplicate?: boolean;
 }
 
 function UploadPage() {
