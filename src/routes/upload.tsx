@@ -229,7 +229,7 @@ function UploadPage() {
               <Button variant="neonOutline" className="flex-1" onClick={reset}>
                 Retry
               </Button>
-              {!detection.requiresContact && detection.category !== "unknown" && (
+              {!detection.requiresContact && !detection.duplicate && detection.category !== "unknown" && (
                 <Button variant="neon" className="flex-1" onClick={handleConfirm}>
                   Claim {detection.xp.toLocaleString()} XP
                 </Button>
