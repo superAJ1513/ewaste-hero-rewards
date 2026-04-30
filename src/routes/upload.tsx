@@ -84,8 +84,15 @@ function UploadPage() {
       body: { imageUrl },
     });
 
-    if (fnErr || !data || data.error) {
-      setError(data?.error || fnErr?.message || "Detection failed");
+    if (fnErr || !data) {
+      setError(fnErr?.message || "Detection failed");
+      setStage("idle");
+      return;
+    }
+
+    // Duplicate detection result still renders in the result UI (with 0 XP message)
+    if (data.error && !data.duplicate) {
+      setError(data.error);
       setStage("idle");
       return;
     }
