@@ -22,6 +22,7 @@ export type Database = {
           description: string | null
           detected_label: string | null
           id: string
+          image_hash: string | null
           image_url: string
           user_id: string
           xp_awarded: number
@@ -33,6 +34,7 @@ export type Database = {
           description?: string | null
           detected_label?: string | null
           id?: string
+          image_hash?: string | null
           image_url: string
           user_id: string
           xp_awarded?: number
@@ -44,6 +46,7 @@ export type Database = {
           description?: string | null
           detected_label?: string | null
           id?: string
+          image_hash?: string | null
           image_url?: string
           user_id?: string
           xp_awarded?: number
