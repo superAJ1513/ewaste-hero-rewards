@@ -179,7 +179,15 @@ function UploadPage() {
               <img src={preview} alt="Captured" className="aspect-video w-full object-cover border border-border" />
             )}
 
-            {detection.requiresContact ? (
+            {detection.duplicate ? (
+              <div className="border border-destructive/40 bg-destructive/10 p-5 text-center">
+                <div className="text-xs font-bold uppercase tracking-widest text-destructive">Duplicate Detected</div>
+                <h3 className="mt-2 font-display text-2xl italic">+0 XP</h3>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  This image (or a near-identical one) has already been submitted to the platform. Each piece of e-waste can only be claimed once.
+                </p>
+              </div>
+            ) : detection.requiresContact ? (
               <div className="border border-neon-cyan/40 bg-neon-cyan/10 p-5 text-center">
                 <div className="text-xs font-bold uppercase tracking-widest text-neon-cyan">Big Item Detected</div>
                 <h3 className="mt-2 font-display text-2xl italic">{detection.label}</h3>
