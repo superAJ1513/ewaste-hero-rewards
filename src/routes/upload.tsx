@@ -24,8 +24,6 @@ interface DetectResult {
   contactPhone?: string;
   reason?: string;
   error?: string;
-  imageHash?: string;
-  duplicate?: boolean;
 }
 
 function UploadPage() {
@@ -84,15 +82,8 @@ function UploadPage() {
       body: { imageUrl },
     });
 
-    if (fnErr || !data) {
-      setError(fnErr?.message || "Detection failed");
-      setStage("idle");
-      return;
-    }
-
-    // Duplicate detection result still renders in the result UI (with 0 XP message)
-    if (data.error && !data.duplicate) {
-      setError(data.error);
+    if (fnErr || !data || data.error) {
+      setError(data?.error || fnErr?.message || "Detection failed");
       setStage("idle");
       return;
     }
@@ -105,17 +96,13 @@ function UploadPage() {
     if (!detection || !user) return;
     const imageUrl = (detection as DetectResult & { _imageUrl: string })._imageUrl;
 
-    if (detection.duplicate) {
-      // Nothing to claim — already submitted by someone
-      return;
-    }
-
     if (detection.category === "unknown") {
       setError("That image wasn't recognized as e-waste. Try a clearer photo.");
       return;
     }
 
     if (detection.requiresContact) {
+      // Don't insert — just guide user to call
       return;
     }
 
@@ -127,7 +114,6 @@ function UploadPage() {
       xp_awarded: detection.xp,
       detected_label: detection.label,
       confidence: detection.confidence,
-      image_hash: detection.imageHash ?? null,
     });
 
     if (insertError) {
@@ -179,15 +165,7 @@ function UploadPage() {
               <img src={preview} alt="Captured" className="aspect-video w-full object-cover border border-border" />
             )}
 
-            {detection.duplicate ? (
-              <div className="border border-destructive/40 bg-destructive/10 p-5 text-center">
-                <div className="text-xs font-bold uppercase tracking-widest text-destructive">Duplicate Detected</div>
-                <h3 className="mt-2 font-display text-2xl italic">+0 XP</h3>
-                <p className="mt-3 text-sm text-muted-foreground">
-                  This image (or a near-identical one) has already been submitted to the platform. Each piece of e-waste can only be claimed once.
-                </p>
-              </div>
-            ) : detection.requiresContact ? (
+            {detection.requiresContact ? (
               <div className="border border-neon-cyan/40 bg-neon-cyan/10 p-5 text-center">
                 <div className="text-xs font-bold uppercase tracking-widest text-neon-cyan">Big Item Detected</div>
                 <h3 className="mt-2 font-display text-2xl italic">{detection.label}</h3>
@@ -229,7 +207,7 @@ function UploadPage() {
               <Button variant="neonOutline" className="flex-1" onClick={reset}>
                 Retry
               </Button>
-              {!detection.requiresContact && !detection.duplicate && detection.category !== "unknown" && (
+              {!detection.requiresContact && detection.category !== "unknown" && (
                 <Button variant="neon" className="flex-1" onClick={handleConfirm}>
                   Claim {detection.xp.toLocaleString()} XP
                 </Button>

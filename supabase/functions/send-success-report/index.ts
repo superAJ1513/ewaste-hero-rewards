@@ -75,22 +75,16 @@ Deno.serve(async (req) => {
     const since7 = new Date(now.getTime() - 7 * dayMs).toISOString();
     const since30 = new Date(now.getTime() - 30 * dayMs).toISOString();
 
-    const [{ data: usersList }, { data: subs }, { data: reds }, { data: products }, { data: profilesData }] = await Promise.all([
+    const [{ data: usersList }, { data: subs }, { data: reds }, { data: products }] = await Promise.all([
       admin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
       admin.from("ewaste_submissions").select("user_id, category, detected_label, confidence, xp_awarded, created_at"),
       admin.from("redemptions").select("user_id, product_name, xp_cost, status, created_at"),
       admin.from("products").select("name, xp_cost, active"),
-      admin.from("profiles").select("id, display_name"),
     ]);
 
     const users = usersList?.users ?? [];
     const submissions = subs ?? [];
     const redemptions = reds ?? [];
-    const nameById = new Map<string, string>();
-    for (const p of (profilesData ?? []) as Array<{ id: string; display_name: string | null }>) {
-      if (p.display_name) nameById.set(p.id, p.display_name);
-    }
-    const displayFor = (uid: string) => nameById.get(uid) ?? `Player-${uid.slice(0, 6)}`;
 
     // ---------- Acquisition & Activation ----------
     const totalUsers = users.length;
@@ -187,17 +181,17 @@ Deno.serve(async (req) => {
       ? topProducts.map(([n, c]) => `<li><b>${n}</b> — ${c} redemption${c > 1 ? "s" : ""}</li>`).join("")
       : "<li style='color:#6b7280'>No redemptions yet</li>";
 
-    // Top contributors (by display name, no emails)
+    // Top contributors
     const contribByUser = [...subsByUser.entries()]
       .map(([uid, arr]) => ({
-        name: displayFor(uid),
+        email: users.find(u => u.id === uid)?.email ?? uid.slice(0, 8),
         items: arr.length,
         xp: arr.reduce((s, x) => s + (x.xp_awarded || 0), 0),
       }))
       .sort((a, b) => b.xp - a.xp)
       .slice(0, 5);
     const topContribHtml = contribByUser.length
-      ? contribByUser.map(c => `<li><b>${c.name}</b> — ${c.xp.toLocaleString()} XP (${c.items} items)</li>`).join("")
+      ? contribByUser.map(c => `<li>${c.email} — <b>${c.xp.toLocaleString()} XP</b> (${c.items} items)</li>`).join("")
       : "<li style='color:#6b7280'>No contributors yet</li>";
 
     // ---------- Build email ----------
