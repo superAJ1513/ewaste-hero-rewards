@@ -75,16 +75,22 @@ Deno.serve(async (req) => {
     const since7 = new Date(now.getTime() - 7 * dayMs).toISOString();
     const since30 = new Date(now.getTime() - 30 * dayMs).toISOString();
 
-    const [{ data: usersList }, { data: subs }, { data: reds }, { data: products }] = await Promise.all([
+    const [{ data: usersList }, { data: subs }, { data: reds }, { data: products }, { data: profilesData }] = await Promise.all([
       admin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
       admin.from("ewaste_submissions").select("user_id, category, detected_label, confidence, xp_awarded, created_at"),
       admin.from("redemptions").select("user_id, product_name, xp_cost, status, created_at"),
       admin.from("products").select("name, xp_cost, active"),
+      admin.from("profiles").select("id, display_name"),
     ]);
 
     const users = usersList?.users ?? [];
     const submissions = subs ?? [];
     const redemptions = reds ?? [];
+    const nameById = new Map<string, string>();
+    for (const p of (profilesData ?? []) as Array<{ id: string; display_name: string | null }>) {
+      if (p.display_name) nameById.set(p.id, p.display_name);
+    }
+    const displayFor = (uid: string) => nameById.get(uid) ?? `Player-${uid.slice(0, 6)}`;
 
     // ---------- Acquisition & Activation ----------
     const totalUsers = users.length;
