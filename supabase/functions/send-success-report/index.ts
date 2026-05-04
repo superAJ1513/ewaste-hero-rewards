@@ -187,17 +187,17 @@ Deno.serve(async (req) => {
       ? topProducts.map(([n, c]) => `<li><b>${n}</b> — ${c} redemption${c > 1 ? "s" : ""}</li>`).join("")
       : "<li style='color:#6b7280'>No redemptions yet</li>";
 
-    // Top contributors
+    // Top contributors (by display name, no emails)
     const contribByUser = [...subsByUser.entries()]
       .map(([uid, arr]) => ({
-        email: users.find(u => u.id === uid)?.email ?? uid.slice(0, 8),
+        name: displayFor(uid),
         items: arr.length,
         xp: arr.reduce((s, x) => s + (x.xp_awarded || 0), 0),
       }))
       .sort((a, b) => b.xp - a.xp)
       .slice(0, 5);
     const topContribHtml = contribByUser.length
-      ? contribByUser.map(c => `<li>${c.email} — <b>${c.xp.toLocaleString()} XP</b> (${c.items} items)</li>`).join("")
+      ? contribByUser.map(c => `<li><b>${c.name}</b> — ${c.xp.toLocaleString()} XP (${c.items} items)</li>`).join("")
       : "<li style='color:#6b7280'>No contributors yet</li>";
 
     // ---------- Build email ----------
