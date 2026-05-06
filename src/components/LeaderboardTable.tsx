@@ -27,6 +27,51 @@ function getRankColor(rank: number) {
   return "text-muted-foreground border-border";
 }
 
+// Game-style avatar frame based on rank for the overall leaderboard.
+function getFrameStyle(rank: number): { ring: string; glow: string; badge: string; badgeLabel: string } {
+  if (rank === 1)
+    return {
+      ring: "ring-2 ring-offset-2 ring-offset-background ring-neon-acid bg-gradient-to-br from-neon-acid/40 to-neon-cyan/20 p-[2px]",
+      glow: "shadow-[0_0_24px_hsl(var(--neon-acid)/0.7)]",
+      badge: "bg-neon-acid text-background",
+      badgeLabel: "👑",
+    };
+  if (rank === 2)
+    return {
+      ring: "ring-2 ring-offset-2 ring-offset-background ring-neon-cyan bg-gradient-to-br from-neon-cyan/40 to-neon-cyan/10 p-[2px]",
+      glow: "shadow-[0_0_18px_hsl(var(--neon-cyan)/0.6)]",
+      badge: "bg-neon-cyan text-background",
+      badgeLabel: "🥈",
+    };
+  if (rank === 3)
+    return {
+      ring: "ring-2 ring-offset-2 ring-offset-background ring-foreground/70 bg-gradient-to-br from-foreground/30 to-foreground/5 p-[2px]",
+      glow: "shadow-[0_0_14px_hsl(var(--foreground)/0.4)]",
+      badge: "bg-foreground text-background",
+      badgeLabel: "🥉",
+    };
+  if (rank <= 10)
+    return {
+      ring: "ring-1 ring-neon-acid/50 bg-neon-acid/10 p-[2px]",
+      glow: "",
+      badge: "bg-neon-acid/80 text-background",
+      badgeLabel: "TOP 10",
+    };
+  if (rank <= 25)
+    return {
+      ring: "ring-1 ring-neon-cyan/40 bg-neon-cyan/5 p-[2px]",
+      glow: "",
+      badge: "bg-neon-cyan/70 text-background",
+      badgeLabel: "TOP 25",
+    };
+  return {
+    ring: "ring-1 ring-border bg-secondary p-[2px]",
+    glow: "",
+    badge: "bg-muted text-muted-foreground",
+    badgeLabel: "",
+  };
+}
+
 function displayUsername(row: BaseRow) {
   if (row.display_name && row.display_name.trim()) return row.display_name.toUpperCase();
   return row.user_email.split("@")[0].toUpperCase().replace(/[^A-Z0-9]/g, "_");
@@ -117,14 +162,33 @@ export function LeaderboardTable({
             <span className={`font-display text-2xl italic ${getRankColor(rank).split(" ")[0]} w-8`}>
               {String(rank).padStart(2, "0")}
             </span>
-            <Avatar
-              className={`size-10 shrink-0 rounded-none border-2 ${getRankColor(rank).split(" ")[1]}`}
-            >
-              {leader.avatar_url ? <AvatarImage src={leader.avatar_url} alt={username} className="rounded-none object-cover" /> : null}
-              <AvatarFallback className="rounded-none bg-muted text-[10px] font-bold">
-                {initials}
-              </AvatarFallback>
-            </Avatar>
+            {mode === "overall" ? (
+              (() => {
+                const frame = getFrameStyle(rank);
+                return (
+                  <div className={`relative shrink-0 ${frame.ring} ${frame.glow}`}>
+                    <Avatar className="size-11 rounded-none">
+                      {leader.avatar_url ? <AvatarImage src={leader.avatar_url} alt={username} className="rounded-none object-cover" /> : null}
+                      <AvatarFallback className="rounded-none bg-muted text-[10px] font-bold">
+                        {initials}
+                      </AvatarFallback>
+                    </Avatar>
+                    {frame.badgeLabel && (
+                      <span className={`absolute -bottom-1.5 left-1/2 -translate-x-1/2 px-1 text-[8px] font-bold uppercase leading-tight ${frame.badge}`}>
+                        {frame.badgeLabel}
+                      </span>
+                    )}
+                  </div>
+                );
+              })()
+            ) : (
+              <Avatar className={`size-10 shrink-0 rounded-none border-2 ${getRankColor(rank).split(" ")[1]}`}>
+                {leader.avatar_url ? <AvatarImage src={leader.avatar_url} alt={username} className="rounded-none object-cover" /> : null}
+                <AvatarFallback className="rounded-none bg-muted text-[10px] font-bold">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+            )}
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-bold uppercase tracking-tight">
                 {username}
