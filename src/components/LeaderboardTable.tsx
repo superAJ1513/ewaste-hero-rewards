@@ -118,7 +118,7 @@ export function LeaderboardTable({
               {String(rank).padStart(2, "0")}
             </span>
             <Avatar
-              className={`hidden size-10 shrink-0 rounded-none border-2 sm:block ${getRankColor(rank).split(" ")[1]}`}
+              className={`size-10 shrink-0 rounded-none border-2 ${getRankColor(rank).split(" ")[1]}`}
             >
               {leader.avatar_url ? <AvatarImage src={leader.avatar_url} alt={username} className="rounded-none object-cover" /> : null}
               <AvatarFallback className="rounded-none bg-muted text-[10px] font-bold">
