@@ -162,14 +162,33 @@ export function LeaderboardTable({
             <span className={`font-display text-2xl italic ${getRankColor(rank).split(" ")[0]} w-8`}>
               {String(rank).padStart(2, "0")}
             </span>
-            <Avatar
-              className={`size-10 shrink-0 rounded-none border-2 ${getRankColor(rank).split(" ")[1]}`}
-            >
-              {leader.avatar_url ? <AvatarImage src={leader.avatar_url} alt={username} className="rounded-none object-cover" /> : null}
-              <AvatarFallback className="rounded-none bg-muted text-[10px] font-bold">
-                {initials}
-              </AvatarFallback>
-            </Avatar>
+            {mode === "overall" ? (
+              (() => {
+                const frame = getFrameStyle(rank);
+                return (
+                  <div className={`relative shrink-0 ${frame.ring} ${frame.glow}`}>
+                    <Avatar className="size-11 rounded-none">
+                      {leader.avatar_url ? <AvatarImage src={leader.avatar_url} alt={username} className="rounded-none object-cover" /> : null}
+                      <AvatarFallback className="rounded-none bg-muted text-[10px] font-bold">
+                        {initials}
+                      </AvatarFallback>
+                    </Avatar>
+                    {frame.badgeLabel && (
+                      <span className={`absolute -bottom-1.5 left-1/2 -translate-x-1/2 px-1 text-[8px] font-bold uppercase leading-tight ${frame.badge}`}>
+                        {frame.badgeLabel}
+                      </span>
+                    )}
+                  </div>
+                );
+              })()
+            ) : (
+              <Avatar className={`size-10 shrink-0 rounded-none border-2 ${getRankColor(rank).split(" ")[1]}`}>
+                {leader.avatar_url ? <AvatarImage src={leader.avatar_url} alt={username} className="rounded-none object-cover" /> : null}
+                <AvatarFallback className="rounded-none bg-muted text-[10px] font-bold">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+            )}
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-bold uppercase tracking-tight">
                 {username}
